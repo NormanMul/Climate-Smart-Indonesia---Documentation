@@ -214,14 +214,6 @@ Where:
 
 ### 4.1 Symmetric Mean Absolute Percentage Error (SMAPE)
 
-The SMAPE loss function is defined as:
-
-$$\text{SMAPE}(y, \hat{y}) = \frac{100\%}{n} \sum_{i=1}^n \frac{2 |y_i - \hat{y}_i|}{|y_i| + |\hat{y}_i| + \epsilon}$$
-
-Where:
-- $y_i$ is the true value
-- $\hat{y}_i$ is the predicted value
-- $\epsilon$ is a small constant to avoid division by zero
 
 In TensorFlow, this is implemented as:
 
