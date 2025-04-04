@@ -79,6 +79,7 @@ Full documentation is available in the following sections:
 - [Model API Documentation](model-api-docs.md)
 - [Model Implementation Code Examples](code-examples.md)
 - [Deployment Guide](deployment-guide.md)
+- [BMKG Integration Guide](docs/bmkg-integration-guide.md)
 
 ## Project Structure
 
@@ -87,6 +88,7 @@ Climate-Smart-Indonesia/
 ├── data/
 │   ├── raw/
 │   ├── processed/
+│   ├── bmkg/              # BMKG data storage
 │   └── README.md
 ├── models/
 │   ├── saved_models/
@@ -98,6 +100,13 @@ Climate-Smart-Indonesia/
 │   ├── __init__.py
 │   ├── data_loader.py
 │   └── feature_engineering.py
+├── bmkg_integration/      # BMKG integration module
+│   ├── __init__.py
+│   ├── api.py
+│   ├── wms.py
+│   ├── netcdf_utils.py
+│   ├── cli.py
+│   └── README.md
 ├── training/
 │   ├── __init__.py
 │   ├── train.py
@@ -116,7 +125,8 @@ Climate-Smart-Indonesia/
 │   ├── dengue-prediction-documentation.md
 │   ├── model-api-docs.md
 │   ├── code-examples.md
-│   └── deployment-guide.md
+│   ├── deployment-guide.md
+│   └── bmkg-integration-guide.md
 ├── requirements.txt
 ├── setup.py
 └── README.md
@@ -143,6 +153,27 @@ python -m training.train --model gan --data data/processed/merged_monthly_dengue
 # Make predictions using a trained model
 python -m evaluation.predict --model models/saved_models/hybrid_model.h5 --data data/processed/test_data.csv --output predictions.csv
 ```
+### BMKG Data Processing
+
+```bash
+# Fetch weather forecast data and convert to NetCDF
+python -m bmkg_integration.cli fetch-weather --adm4 31.74.06.1002 --output data/bmkg/weather.nc
+
+# Get rainfall map data
+python -m bmkg_integration.cli fetch-rainfall --output data/bmkg/rainfall.nc
+
+# Process data for a specific region and date range
+python -m bmkg_integration.cli process-region --region jakarta --start 2023-01-01 --end 2023-12-31 --output data/bmkg/jakarta_2023.nc
+```
+
+### Running the API
+
+```bash
+# Start the prediction API
+python -m api.app
+
+# In a separate terminal, make a prediction request
+curl -X POST -F "file=@data/processed/test_data.csv" http://localhost:5000/predict
 
 ### Running the API
 
