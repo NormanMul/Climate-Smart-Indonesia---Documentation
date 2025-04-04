@@ -11,6 +11,7 @@ The models encode high-dimensional meteorological features into a lower-dimensio
 ## Table of Contents
 
 - [Data Sources](#data-sources)
+- [Mathematical Model](#Mathematical-Model)
 - [Architecture](#architecture)
   - [Basic VAE](#basic-vae)
   - [Conditional Attention VAE](#conditional-attention-vae)
@@ -39,6 +40,283 @@ The primary dataset is stored in `combined_data.csv`, which contains meteorologi
   - Geographic coordinates (latitude, longitude)
 
 Data is organized by date and region, with each row representing a specific location and time point.
+
+## Mathematical Model
+# Mathematical Foundations for Dengue Prediction Models
+
+## Table of Contents
+- [1. Introduction](#1-introduction)
+- [2. Variational Autoencoders (VAEs)](#2-variational-autoencoders-vaes)
+  - [2.1 Standard VAE Formulation](#21-standard-vae-formulation)
+  - [2.2 Conditional Attention VAE](#22-conditional-attention-vae)
+  - [2.3 VAE Loss Function](#23-vae-loss-function)
+- [3. Time Series Models](#3-time-series-models)
+  - [3.1 LSTM Model Formulation](#31-lstm-model-formulation)
+  - [3.2 Hybrid LSTM-GRU-Attention](#32-hybrid-lstm-gru-attention)
+  - [3.3 Conditional GAN](#33-conditional-gan)
+- [4. Loss Functions and Optimization](#4-loss-functions-and-optimization)
+  - [4.1 Symmetric Mean Absolute Percentage Error (SMAPE)](#41-symmetric-mean-absolute-percentage-error-smape)
+  - [4.2 Bayesian Optimization](#42-bayesian-optimization)
+- [5. Evaluation Metrics](#5-evaluation-metrics)
+  - [5.1 Performance Metrics](#51-performance-metrics)
+  - [5.2 Residual Analysis](#52-residual-analysis)
+- [6. Statistical Tests and Validation](#6-statistical-tests-and-validation)
+  - [6.1 Durbin-Watson Test](#61-durbin-watson-test)
+  - [6.2 Time Series Cross-Validation](#62-time-series-cross-validation)
+
+## 1. Introduction
+
+This document provides the mathematical foundations for the dengue prediction models developed in our project. We leverage climate data encoded through Variational Autoencoders (VAEs) and employ multiple neural network architectures to predict dengue fever outbreaks across multiple countries.
+
+## 2. Variational Autoencoders (VAEs)
+
+### 2.1 Standard VAE Formulation
+
+A Variational Autoencoder is a generative model that learns to encode input data into a latent space representation and then decode it back to reconstruct the original input. The VAE consists of an encoder network that maps input $x$ to parameters of a latent distribution, and a decoder network that maps samples from this distribution back to the input space.
+
+The encoder produces parameters $\mu$ and $\sigma$ of a Gaussian distribution:
+
+$$q_\phi(z|x) = \mathcal{N}(z|\mu_\phi(x), \sigma_\phi^2(x))$$
+
+Where:
+- $\phi$ represents the encoder network parameters
+- $\mu_\phi(x)$ is the mean vector of the latent distribution
+- $\sigma_\phi^2(x)$ is the variance vector of the latent distribution
+
+For numerical stability, the encoder actually outputs $\log \sigma^2$ rather than $\sigma^2$:
+
+$$\mu, \log \sigma^2 = \text{Encoder}_\phi(x)$$
+
+The reparameterization trick is used to enable backpropagation through the random sampling process:
+
+$$z = \mu + \sigma \odot \epsilon, \quad \text{where } \epsilon \sim \mathcal{N}(0, I)$$
+
+The decoder reconstructs the input from the latent representation:
+
+$$p_\theta(x|z) = \text{Decoder}_\theta(z)$$
+
+### 2.2 Conditional Attention VAE
+
+Our Conditional Attention VAE extends the standard VAE with country and year embeddings, positional encoding, and attention mechanisms. The conditional encoder can be mathematically represented as:
+
+$$\mu, \log \sigma^2 = \text{Encoder}_\phi(x, c, y)$$
+
+Where:
+- $x$ is the input data
+- $c$ is the country embedding
+- $y$ is the year embedding
+
+The attention mechanism is defined as:
+
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+
+Where:
+- $Q$ is the query matrix
+- $K$ is the key matrix
+- $V$ is the value matrix
+- $d_k$ is the dimensionality of the keys
+
+For spatial attention over meteorological features:
+
+$$\text{SpatialAttention}(X) = \text{Attention}(W_Q X, W_K X, W_V X)$$
+
+For temporal attention over time periods:
+
+$$\text{TemporalAttention}(X) = \text{Attention}(W_Q X, W_K X, W_V X)$$
+
+### 2.3 VAE Loss Function
+
+The VAE is trained to minimize a loss function that consists of two components:
+
+1. Reconstruction loss: measures how well the decoder can reconstruct the input from the latent representation.
+2. KL divergence: measures how close the latent distribution is to a standard normal distribution.
+
+The VAE loss function is:
+
+$$\mathcal{L}(\theta, \phi; x) = \mathbb{E}_{q_\phi(z|x)}\left[\log p_\theta(x|z)\right] - D_{KL}(q_\phi(z|x) || p(z))$$
+
+Where:
+- $p(z) = \mathcal{N}(0, I)$ is the prior distribution
+- $D_{KL}$ is the Kullback-Leibler divergence
+
+For a Gaussian latent distribution, the KL divergence has a closed-form solution:
+
+$$D_{KL}(q_\phi(z|x) || p(z)) = \frac{1}{2} \sum_{j=1}^J \left(1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2\right)$$
+
+Where $J$ is the dimensionality of the latent space.
+
+## 3. Time Series Models
+
+### 3.1 LSTM Model Formulation
+
+Long Short-Term Memory (LSTM) networks are a type of recurrent neural network (RNN) capable of learning long-term dependencies in sequential data. The LSTM unit contains a cell state and three gates: input, forget, and output gates.
+
+The LSTM equations at time step $t$ are:
+
+$$f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$$
+$$i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)$$
+$$\tilde{C}_t = \tanh(W_C \cdot [h_{t-1}, x_t] + b_C)$$
+$$C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$$
+$$o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$$
+$$h_t = o_t \odot \tanh(C_t)$$
+
+Where:
+- $f_t$ is the forget gate output
+- $i_t$ is the input gate output
+- $\tilde{C}_t$ is the candidate cell state
+- $C_t$ is the cell state
+- $o_t$ is the output gate
+- $h_t$ is the hidden state
+- $\sigma$ is the sigmoid function
+- $\odot$ represents element-wise multiplication
+
+### 3.2 Hybrid LSTM-GRU-Attention
+
+Our hybrid model combines LSTM, GRU (Gated Recurrent Unit), and attention mechanisms. The GRU equations at time step $t$ are:
+
+$$z_t = \sigma(W_z \cdot [h_{t-1}, x_t] + b_z)$$
+$$r_t = \sigma(W_r \cdot [h_{t-1}, x_t] + b_r)$$
+$$\tilde{h}_t = \tanh(W_h \cdot [r_t \odot h_{t-1}, x_t] + b_h)$$
+$$h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t$$
+
+Where:
+- $z_t$ is the update gate output
+- $r_t$ is the reset gate output
+- $\tilde{h}_t$ is the candidate hidden state
+- $h_t$ is the hidden state
+
+For the hybrid model, the LSTM outputs are fed into the GRU:
+
+$$h_t^{LSTM} = \text{LSTM}(x_t, h_{t-1}^{LSTM})$$
+$$h_t^{GRU} = \text{GRU}(h_t^{LSTM}, h_{t-1}^{GRU})$$
+
+Multi-head attention is then applied to the GRU outputs:
+
+$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, ..., \text{head}_h)W^O$$
+
+Where:
+- $W_i^Q, W_i^K, W_i^V, W^O$ are parameter matrices
+
+### 3.3 Conditional GAN
+
+Our Conditional Generative Adversarial Network (CGAN) approach involves a generator $G$ and a discriminator $D$. The generator produces dengue incidence predictions, while the discriminator distinguishes between real and generated sequences.
+
+The adversarial min-max game can be formulated as:
+
+$$\min_G \max_D V(D, G) = \mathbb{E}_{x \sim p_{data}(x)}[\log D(x|c)] + \mathbb{E}_{z \sim p_z(z)}[\log(1 - D(G(z|c)))]$$
+
+Where:
+- $c$ is the condition (climate and other features)
+- $G(z|c)$ is the generator output given latent noise $z$ and condition $c$
+- $D(x|c)$ is the discriminator's probability that $x$ is real given condition $c$
+
+## 4. Loss Functions and Optimization
+
+### 4.1 Symmetric Mean Absolute Percentage Error (SMAPE)
+
+The SMAPE loss function is defined as:
+
+$$\text{SMAPE}(y, \hat{y}) = \frac{100\%}{n} \sum_{i=1}^n \frac{2 |y_i - \hat{y}_i|}{|y_i| + |\hat{y}_i| + \epsilon}$$
+
+Where:
+- $y_i$ is the true value
+- $\hat{y}_i$ is the predicted value
+- $\epsilon$ is a small constant to avoid division by zero
+
+In TensorFlow, this is implemented as:
+
+```python
+def smape_loss(y_true, y_pred):
+    epsilon = K.epsilon()  # Small value to avoid division by zero
+    denominator = K.abs(y_true) + K.abs(y_pred) + epsilon
+    return K.mean(2 * K.abs(y_pred - y_true) / denominator, axis=-1)
+```
+
+### 4.2 Bayesian Optimization
+
+Bayesian optimization is used for hyperparameter tuning. It models the objective function $f(\theta)$ with a Gaussian Process (GP):
+
+$$p(f|\mathcal{D}) = \mathcal{GP}(\mu(\theta), k(\theta, \theta'))$$
+
+Where:
+- $\mathcal{D} = \{(\theta_i, f(\theta_i))\}_{i=1}^N$ is the observed data
+- $\mu(\theta)$ is the mean function
+- $k(\theta, \theta')$ is the kernel function
+
+The acquisition function guides the search for the next point to evaluate. We use the Expected Improvement (EI) acquisition function:
+
+$$\text{EI}(\theta) = \mathbb{E}\max(0, f(\theta) - f(\theta^+))$$
+
+Where $f(\theta^+)$ is the best observed value so far.
+
+Our search space includes:
+- LSTM units: [32, 256]
+- Batch size: [16, 64]
+- Learning rate: [1e-5, 5e-4]
+- Dropout rate: [0.05, 0.2]
+
+## 5. Evaluation Metrics
+
+### 5.1 Performance Metrics
+
+We use several metrics to evaluate model performance:
+
+**Mean Squared Error (MSE):**
+$$\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$$
+
+**Root Mean Squared Error (RMSE):**
+$$\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}$$
+
+**R-squared (R²):**
+$$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}$$
+
+**Symmetric Mean Absolute Percentage Error (SMAPE):**
+$$\text{SMAPE} = \frac{100\%}{n} \sum_{i=1}^n \frac{2 |y_i - \hat{y}_i|}{|y_i| + |\hat{y}_i|}$$
+
+**Brier Score:**
+$$\text{Brier} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$$
+
+**Mean Bias Error (MBE):**
+$$\text{MBE} = \frac{1}{n} \sum_{i=1}^n (\hat{y}_i - y_i)$$
+
+### 5.2 Residual Analysis
+
+Residual analysis involves examining the differences between observed and predicted values:
+
+$$\text{residuals} = y - \hat{y}$$
+
+We assess residuals through:
+1. Histogram of residuals (should approximate a normal distribution)
+2. Residuals vs. fitted values plot (should show no pattern)
+3. Q-Q plot (should follow a straight line if residuals are normally distributed)
+
+## 6. Statistical Tests and Validation
+
+### 6.1 Durbin-Watson Test
+
+The Durbin-Watson test checks for autocorrelation in the residuals:
+
+$$\text{DW} = \frac{\sum_{i=2}^n (e_i - e_{i-1})^2}{\sum_{i=1}^n e_i^2}$$
+
+Where $e_i$ are the residuals.
+
+Interpretation:
+- DW ≈ 2: No autocorrelation
+- DW < 2: Positive autocorrelation
+- DW > 2: Negative autocorrelation
+
+### 6.2 Time Series Cross-Validation
+
+For time series data, we use TimeSeriesSplit for cross-validation, which respects the temporal ordering of observations:
+
+For $k$ splits, the data is divided into $k$ folds:
+1. Training set: observations [0, n₁)
+   Validation set: observations [n₁, n₂)
+2. Training set: observations [0, n₂)
+   Validation set: observations [n₂, n₃)
+...and so on, where n₁ < n₂ < n₃ < ... < n.
+
+This approach ensures that we never train on future data and validate on past data, which would lead to data leakage and overly optimistic performance estimates.
 
 ## Architecture
 
