@@ -24,8 +24,7 @@ BMKG provides various meteorological, climatological, and geophysical data relev
 1. **Weather Forecast Data**: Short-term weather predictions
 2. **Climate Data**: Historical and current climate observations
 3. **Rainfall Data**: Precipitation measurements across Indonesia
-4. **Earthquake Data**: Seismic activity information
-5. **WMS Map Services**: Web Map Services for visualizing data
+4. **WMS Map Services**: Web Map Services for visualizing data
 
 For dengue prediction models, the most relevant data sources are weather forecasts, climate data, and rainfall data.
 
