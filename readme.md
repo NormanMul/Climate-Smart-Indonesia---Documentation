@@ -202,20 +202,7 @@ Our models demonstrate strong predictive performance for dengue incidence across
 | Hybrid LSTM-GRU-Attention| 0.8733    | 0.53    | 19.45%     | 1.94          |
 | Conditional GAN          | 0.8412    | 0.56    | 18.72%     | 1.97          |
 
-## Deployment
 
-See the [Deployment Guide](deployment-guide.md) for detailed instructions on deploying the models in various environments.
-
-### Docker Deployment
-
-```bash
-# Build and run with Docker
-docker build -t climate-smart-indonesia .
-docker run -p 5000:5000 climate-smart-indonesia
-
-# Using docker-compose
-docker-compose up -d
-```
 
 ## Contributors
 
