@@ -4,7 +4,7 @@
 ![Project Status](https://img.shields.io/badge/status-active-brightgreen)
 ![MLflow](https://img.shields.io/badge/MLflow-tracking-blue)
 
-A comprehensive system for predicting dengue fever outbreaks in Indonesia using climate data and neural network models.
+A comprehensive system for predicting dengue fever outbreaks and climate health diseases in Indonesia using climate data and neural network models.
 
 ## Overview
 
