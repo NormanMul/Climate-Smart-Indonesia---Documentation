@@ -8,7 +8,7 @@ A comprehensive system for predicting dengue fever outbreaks and climate health 
 
 ## Overview
 
-This project leverages climate data encoded through Variational Autoencoders (VAEs) to predict dengue fever outbreaks across Indonesia. By combining traditional epidemiological indicators with latent climate representations, our models demonstrate enhanced prediction capabilities for disease incidence rates.
+This project leverages climate data encoded to predict dengue fever outbreaks across Indonesia. By combining traditional epidemiological indicators with latent climate representations, our models demonstrate enhanced prediction capabilities for disease incidence rates.
 
 ### Key Features
 
