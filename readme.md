@@ -215,8 +215,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Project developed as part of research on climate-sensitive disease prediction in Indonesia
-- Special thanks to contributors and institutions providing the climate and dengue incidence data
+- The ClimateSmart Indonesia initiative was launched in 2023 with funding support from the philanthropy of the President of the UAE through the Reaching The Last Mile.
+- The distributed AI and EDGE infrastructure is developed with funding support from the Patrick J. McGovern Foundation.
+- Special thanks to KORIKA, the Ministry of Health, Indonesia and BMKG for data and strategic inputs.
 - Powered by TensorFlow, PyTorch, and MLflow
 
 # Create a virtual environment
