@@ -694,10 +694,7 @@ Planned improvements to the project include:
    - Fine-grained geographic resolution (sub-national)
    - Longer-term forecasting horizons (3-6 months)
 
-## Contributors
 
-- [Contributor Name] - [Role or Contribution]
-- [Contributor Name] - [Role or Contribution]
 
 ## License
 
