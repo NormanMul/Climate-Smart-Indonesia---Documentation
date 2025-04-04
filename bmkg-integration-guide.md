@@ -615,13 +615,10 @@ print("Rainfall data saved as NetCDF")
 For questions or assistance with BMKG data integration, please contact:
 
 - **Climate Smart Indonesia Development Team**
-  - Email: support@climatesmart-indonesia.org
   - GitHub: https://github.com/NormanMul/Climate-Smart-Indonesia---Documentation
 
 - **BMKG Data Services**
   - Email: info@bmkg.go.id
   - Website: https://www.bmkg.go.id/
 
----
 
-This documentation was last updated on April 4, 2025.
