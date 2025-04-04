@@ -17,5 +17,5 @@ The page you're looking for doesn't exist. Please navigate back to the [home pag
 ## Contact
 
 If you need assistance, please contact the project contributors:
-- Naufal Prawironegoro
-- Dr. Kaushik Sharkar
+- [Naufal Prawironegoro](https://id.linkedin.com/in/naufal-prawironegoro) : https://id.linkedin.com/in/naufal-prawironegoro
+- [Dr. Kaushik Sharkar](https://in.linkedin.com/in/dr-kaushik-sarkar) : https://in.linkedin.com/in/dr-kaushik-sarkar
