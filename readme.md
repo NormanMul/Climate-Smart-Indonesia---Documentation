@@ -205,9 +205,9 @@ Our models demonstrate strong predictive performance for dengue incidence across
 
 
 ## Contributors
-
+- Dr. Kaushik Sarkar
 - Naufal Prawironegoro
-- Dr. Kaushik Sharkar
+
 
 ## License
 
