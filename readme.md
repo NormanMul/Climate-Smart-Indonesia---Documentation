@@ -1,14 +1,14 @@
-# Climate Smart Indonesia
+# Climate Smart Indonesia Multi-disease Prediction System
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Project Status](https://img.shields.io/badge/status-active-brightgreen)
 ![MLflow](https://img.shields.io/badge/MLflow-tracking-blue)
 
-A comprehensive system for predicting dengue fever outbreaks and climate health diseases in Indonesia using climate data and neural network models.
+A comprehensive system for predicting climate-sensitive disease outbreaks and scenarios in Indonesia using disease surveillance data, climate data, and advanced neural network models.
 
 ## Overview
 
-This project leverages climate data encoded to predict dengue fever outbreaks across Indonesia. By combining traditional epidemiological indicators with latent climate representations, our models demonstrate enhanced prediction capabilities for disease incidence rates.
+This project leverages climate data encoded to predict climate-sensitive disease outbreaks across Indonesia. By combining traditional epidemiological indicators with latent climate representations, our models demonstrate enhanced prediction capabilities for disease incidence rates.
 
 ### Key Features
 
