@@ -151,24 +151,7 @@ Where $J$ is the dimensionality of the latent space.
 
 Long Short-Term Memory (LSTM) networks are a type of recurrent neural network (RNN) capable of learning long-term dependencies in sequential data. The LSTM unit contains a cell state and three gates: input, forget, and output gates.
 
-The LSTM equations at time step $t$ are:
 
-$$f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$$
-$$i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)$$
-$$\tilde{C}_t = \tanh(W_C \cdot [h_{t-1}, x_t] + b_C)$$
-$$C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$$
-$$o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$$
-$$h_t = o_t \odot \tanh(C_t)$$
-
-Where:
-- $f_t$ is the forget gate output
-- $i_t$ is the input gate output
-- $\tilde{C}_t$ is the candidate cell state
-- $C_t$ is the cell state
-- $o_t$ is the output gate
-- $h_t$ is the hidden state
-- $\sigma$ is the sigmoid function
-- $\odot$ represents element-wise multiplication
 
 ### 3.2 Hybrid LSTM-GRU-Attention
 
